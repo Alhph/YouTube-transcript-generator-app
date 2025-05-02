@@ -16,7 +16,7 @@ def extract_video_id(url):
                 return query.path.split('/')[2]
             elif query.path.startswith('/v/'):
                 return query.path.split('/')[2]
-    except Exception as e:
+    except Exception:
         return None
 
 @app.route('/transcript', methods=['POST'])
@@ -35,4 +35,4 @@ def get_transcript():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)￼Enter
+    app.run(debug=True)
