@@ -7,76 +7,101 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #f9f9f9;
+      background: #f7f9fc;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
     }
+
     h1 {
-      text-align: center;
+      color: #222;
     }
-    input, button {
-      padding: 0.6rem;
-      margin: 0.5rem 0;
-      width: 100%;
-      max-width: 600px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-    }
-    #transcript {
-      white-space: pre-wrap;
-      background: #fff;
-      padding: 1rem;
+
+    input {
+      padding: 10px;
+      width: 300px;
       border: 1px solid #ccc;
-      margin-top: 1rem;
+      border-radius: 8px;
+      margin-top: 20px;
     }
-    #loading {
-      display: none;
-    }
-    #error {
-      color: red;
-    }
-    #download {
-      display: none;
+
+    button {
+      padding: 10px 20px;
       margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #transcript {
+      margin-top: 20px;
+      max-width: 700px;
+      text-align: left;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #downloadBtn {
+      display: none;
+      background-color: #28a745;
+    }
+
+    #downloadBtn:hover {
+      background-color: #1c7d35;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>YouTube Transcript Generator</h1>
-    <input id="url" type="text" placeholder="Enter YouTube video URL"/>
-    <button onclick="getTranscript()">Generate Transcript</button>
-    <p id="loading">Fetching transcript...</p>
-    <p id="error"></p>
-    <div id="transcript"></div>
-    <button id="download" onclick="downloadTranscript()">Download Transcript</button>
-  </div>
+  <h1>YouTube Transcript Generator</h1>
+  <input type="text" id="urlInput" placeholder="Enter YouTube video URL" />
+  <button onclick="generateTranscript()">Generate Transcript</button>
+  <button id="downloadBtn" onclick="downloadTranscript()">Download Transcript</button>
+  <div id="transcript"></div>
 
   <script>
-    async function getTranscript() {
-      const url = document.getElementById('url').value;
-      const loading = document.getElementById('loading');
-      const error = document.getElementById('error');
-      const transcriptDiv = document.getElementById('transcript');
-      const downloadBtn = document.getElementById('download');
+    async function generateTranscript() {
+      const url = document.getElementById("urlInput").value;
+      const response = await fetch("/transcript", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url })
+      });
 
-      loading.style.display = 'block';
-      error.textContent = '';
-      transcriptDiv.textContent = '';
-      downloadBtn.style.display = 'none';
+      const data = await response.json();
+      const transcriptDiv = document.getElementById("transcript");
+      const downloadBtn = document.getElementById("downloadBtn");
 
-      try {
-        const response = await fetch('/transcript', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body
-  <script>
-    async function getTranscript() {
-      const url = document.getElementById('ytUrl').value;
-      const language = document.getElementById('language').value;
-      const result = document.getElementById('result');
-      const copyBtn = document.getElementById('copyBtn');
-      const downloadBtn = document.getElementById('downloadBtn');
-      result.textContent = "Loading...";
-      result.className = "loading";
+      if (data.transcript) {
+        transcriptDiv.textContent = data.transcript;
+        downloadBtn.style.display = "inline-block";
+      } else {
+        transcriptDiv.textContent = data.error || "Something went wrong.";
+        downloadBtn.style.display = "none";
+      }
+    }
+
+    function downloadTranscript() {
+      const text = document.getElementById("transcript").textContent;
+      const blob = new Blob([text], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "transcript.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
