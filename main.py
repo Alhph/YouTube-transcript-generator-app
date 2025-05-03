@@ -36,7 +36,9 @@ def get_transcript():
         full_text = " ".join([segment['text'] for segment in transcript])
         return jsonify({'transcript': full_text})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        if "429" in str(e):
+            return jsonify({'error': 'YouTube is limiting requests right now. Please try again later.'}), 429
+        return jsonify({'error': 'Could not retrieve transcript. The video may not have one or access is restricted.'}), 500
 
 if __name__ == '__main__':
     import os
