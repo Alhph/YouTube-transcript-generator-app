@@ -21,7 +21,7 @@ def extract_video_id(url):
 
 @app.route('/')
 def home():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('.', '/index.html')
 @app.route('/transcript', methods=['POST'])
 def get_transcript():
     data = request.get_json()
