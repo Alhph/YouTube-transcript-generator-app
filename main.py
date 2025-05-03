@@ -18,6 +18,7 @@ def extract_video_id(url):
                 return query.path.split('/')[2]
     except Exception:
         return None
+
 @app.route('/')
 def home():
     return send_from_directory('.', 'index.html')
