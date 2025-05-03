@@ -1,4 +1,4 @@
-from flask import send_from_directory Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
 
