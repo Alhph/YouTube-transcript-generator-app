@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import send_from_directory Flask, request, jsonify
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
 
@@ -18,7 +18,9 @@ def extract_video_id(url):
                 return query.path.split('/')[2]
     except Exception:
         return None
-
+@app.route('/')
+def home():
+    return send_from_directory('.', 'index.html')
 @app.route('/transcript', methods=['POST'])
 def get_transcript():
     data = request.get_json()
