@@ -21,7 +21,8 @@ def extract_video_id(url):
 
 @app.route('/')
 def home():
-    return send_from_directory('.', '/index.html')
+    return send_file('index.html')  # <-- Corrected line
+
 @app.route('/transcript', methods=['POST'])
 def get_transcript():
     data = request.get_json()
@@ -39,5 +40,5 @@ def get_transcript():
 
 if __name__ == '__main__':
     import os
-port = int(os.environ.get("PORT", 5000))
-app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
