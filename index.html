@@ -1,92 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YouTube Transcript Generator</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
+      padding: 2rem;
       background: #f9f9f9;
-      padding: 20px;
-      max-width: 700px;
+    }
+    h1 {
+      text-align: center;
+    }
+    input, button {
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      width: 100%;
+      max-width: 600px;
+    }
+    .container {
+      max-width: 600px;
       margin: auto;
     }
-
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-
-    input, select, button {
-      padding: 12px;
-      width: 100%;
-      margin-top: 12px;
+    #transcript {
+      white-space: pre-wrap;
+      background: #fff;
+      padding: 1rem;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 16px;
+      margin-top: 1rem;
     }
-
-    button {
-      background: #4CAF50;
-      color: white;
-      font-weight: bold;
-      transition: background 0.3s ease;
+    #loading {
+      display: none;
     }
-
-    button:hover {
-      background: #45a049;
+    #error {
+      color: red;
     }
-
-    #copyBtn, #downloadBtn {
-      width: 48%;
+    #download {
       display: none;
       margin-top: 10px;
     }
-
-    .button-row {
-      display: flex;
-      gap: 4%;
-      justify-content: space-between;
-    }
-
-    pre {
-      white-space: pre-wrap;
-      background: #fff;
-      padding: 16px;
-      border-radius: 8px;
-      margin-top: 20px;
-      border: 1px solid #ddd;
-      color: #333;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .loading { color: #007BFF; font-weight: bold; }
-    .error { color: red; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>YouTube Transcript Generator</h2>
-  <input type="text" id="ytUrl" placeholder="Paste YouTube URL here" />
-  <select id="language">
-    <option value="en">English</option>
-    <option value="es">Spanish</option>
-    <option value="fr">French</option>
-    <option value="de">German</option>
-    <option value="pt">Portuguese</option>
-    <option value="id">Indonesian</option>
-    <option value="sw">Swahili</option>
-  </select>
-  <button onclick="getTranscript()">Get Transcript</button>
-  
-  <div class="button-row">
-    <button id="copyBtn" onclick="copyTranscript()">Copy Transcript</button>
-    <button id="downloadBtn" onclick="downloadTranscript()">Download Transcript</button>
+  <div class="container">
+    <h1>YouTube Transcript Generator</h1>
+    <input id="url" type="text" placeholder="Enter YouTube video URL"/>
+    <button onclick="getTranscript()">Generate Transcript</button>
+    <p id="loading">Fetching transcript...</p>
+    <p id="error"></p>
+    <div id="transcript"></div>
+    <button id="download" onclick="downloadTranscript()">Download Transcript</button>
   </div>
 
-  <pre id="result"></pre>
+  <script>
+    async function getTranscript() {
+      const url = document.getElementById('url').value;
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const transcriptDiv = document.getElementById('transcript');
+      const downloadBtn = document.getElementById('download');
 
+      loading.style.display = 'block';
+      error.textContent = '';
+      transcriptDiv.textContent = '';
+      downloadBtn.style.display = 'none';
+
+      try {
+        const response = await fetch('/transcript', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body
   <script>
     async function getTranscript() {
       const url = document.getElementById('ytUrl').value;
