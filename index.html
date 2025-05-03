@@ -6,20 +6,29 @@
   <style>
     body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
     input, button { padding: 10px; width: 100%; margin-top: 10px; }
+    #copyBtn { display: none; background: #4CAF50; color: white; border: none; cursor: pointer; }
+    #copyBtn:hover { background: #45a049; }
     pre { white-space: pre-wrap; background: #f1f1f1; padding: 10px; border-radius: 5px; margin-top: 20px; }
+    .loading { color: blue; }
+    .error { color: red; }
   </style>
 </head>
 <body>
   <h2>YouTube Transcript Generator</h2>
   <input type="text" id="ytUrl" placeholder="Paste YouTube URL here" />
   <button onclick="getTranscript()">Get Transcript</button>
+  <button id="copyBtn" onclick="copyTranscript()">Copy Transcript</button>
   <pre id="result"></pre>
 
   <script>
     async function getTranscript() {
       const url = document.getElementById('ytUrl').value;
       const result = document.getElementById('result');
+      const copyBtn = document.getElementById('copyBtn');
       result.textContent = "Loading...";
+      result.className = "loading";
+      copyBtn.style.display = "none";
+
       try {
         const response = await fetch('/transcript', {
           method: 'POST',
@@ -27,10 +36,25 @@
           body: JSON.stringify({ url })
         });
         const data = await response.json();
-        result.textContent = data.transcript || data.error || "Something went wrong.";
+        if (data.transcript) {
+          result.textContent = data.transcript;
+          result.className = "";
+          copyBtn.style.display = "inline-block";
+        } else {
+          result.textContent = data.error || "Could not get transcript.";
+          result.className = "error";
+        }
       } catch (err) {
         result.textContent = "Error: " + err.message;
+        result.className = "error";
       }
+    }
+
+    function copyTranscript() {
+      const text = document.getElementById('result').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Transcript copied to clipboard!");
+      });
     }
   </script>
 </body>
